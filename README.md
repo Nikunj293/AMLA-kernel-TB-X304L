@@ -29,14 +29,6 @@ adds a legacy KernelSU integration on top of the base kernel.
 - This is a legacy port: use a KernelSU Manager from the same era. Newer
   KernelSU releases are unverified against this integration.
 
-## Tested vs untested images
-
-- **Tested:** the KernelSU image built from this branch, reporting version
-  `11872`; root access confirmed on the TB-X304L configuration above.
-- **Untested:** builds with KernelSU disabled (including the `main` branch).
-  These are provided for development only and have **not** been confirmed to
-  boot.
-
 ## Build requirements
 
 - AArch64 GCC 4.9 (`aarch64-linux-android-4.9`) — the toolchain used for the
