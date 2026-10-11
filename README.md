@@ -20,8 +20,6 @@ AMLA is a custom kernel for the Lenovo Tab 4 10 (TB-X304L). This branch
 
 ## Status
 
-- This branch builds, but it has **not been boot-tested** as a standalone
-  image.
 - A KernelSU build exists and has been boot-tested separately (see the `ksu`
   branch). That result does not apply to this branch.
 
