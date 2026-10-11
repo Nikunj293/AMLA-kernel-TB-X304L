@@ -17,17 +17,23 @@ ccflags-y += -I$(objtree)/security/selinux -include $(srctree)/include/uapi/asm-
 obj-$(CONFIG_KSU) += kernelsu.o
 
 # .git is a text file while the module is imported by 'git submodule add'.
+# ksu_version: major * 10000 + git version + 200 for historical reasons.
+# A command-line KSU_VERSION (make KSU_VERSION=...) takes precedence. Otherwise
+# derive it from .git, or fall back to the pinned base revision of this vendored
+# 3.18 tree: upstream KernelSU v0.9.5 (commit count 1672 -> version 11872).
+ifndef KSU_VERSION
 ifeq ($(shell test -e $(srctree)/$(src)/../.git; echo $$?),0)
 $(shell cd $(srctree)/$(src); /usr/bin/env PATH="$$PATH":/usr/bin:/usr/local/bin [ -f ../.git/shallow ] && git fetch --unshallow)
 KSU_GIT_VERSION := $(shell cd $(srctree)/$(src); /usr/bin/env PATH="$$PATH":/usr/bin:/usr/local/bin git rev-list --count HEAD)
-# ksu_version: major * 10000 + git version + 200 for historical reasons
-$(eval KSU_VERSION=$(shell expr 10000 + $(KSU_GIT_VERSION) + 200))
+KSU_VERSION := $(shell expr 10000 + $(KSU_GIT_VERSION) + 200)
+else # No .git: use the pinned base revision of the vendored 3.18 tree.
+$(warning "KSU_GIT_VERSION not defined! Falling back to pinned KernelSU base version.")
+KSU_VERSION := 11872
+endif
+endif
+
 $(info -- KernelSU version: $(KSU_VERSION))
 ccflags-y += -DKSU_VERSION=$(KSU_VERSION)
-else # If there is no .git file, the default version will be passed.
-$(warning "KSU_GIT_VERSION not defined! It is better to make KernelSU a git submodule!")
-ccflags-y += -DKSU_VERSION=16
-endif
 
 ifeq ($(shell grep -q " current_sid(void)" $(srctree)/security/selinux/include/objsec.h; echo $$?),0)
 ccflags-y += -DKSU_COMPAT_HAS_CURRENT_SID
